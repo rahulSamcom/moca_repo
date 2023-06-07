@@ -1,0 +1,45 @@
+name: Firebase Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Xcode
+        uses: nightstory/setup-xcodegen@v1
+        with:
+          enable-cache: true
+          version: latest
+  
+      - name: Install CocoaPods
+        run: gem install cocoapods
+
+      - name: Install project dependencies
+        run: pod install
+
+      - name: Build and Archive
+        run: xcodebuild -workspace MocaDC.xcworkspace -scheme QuangNinhDev -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max' -archivePath ${{ env.ARCHIVE_PATH }} archive
+
+      - name: Export Archive as IPA
+        run: xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_PATH }} -exportPath ${{ env.EXPORT_PATH }} -exportOptionsPlist ExportOptions.plist
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase App Distribution
+        run: |
+          echo ${{ secrets.FIREBASE_TOKEN }} | firebase login:ci
+          firebase appdistribution:distribute ${{ env.EXPORT_PATH }}/YourApp.ipa --app ${{ secrets.FIREBASE_APP_ID }} --groups testers --token=$FIREBASE_TOKEN
