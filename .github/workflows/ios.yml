@@ -19,11 +19,11 @@ jobs:
           enable-cache: true
           version: latest
   
-      - name: Install CocoaPods
-        run: gem install cocoapods
+#       - name: Install CocoaPods
+#         run: gem install cocoapods
 
-      - name: Install project dependencies
-        run: pod install
+#       - name: Install project dependencies
+#         run: pod install
 
       - name: Build and Archive
         run: xcodebuild -workspace MocaDC.xcworkspace -scheme MocaDC -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max' -archivePath ${{ env.ARCHIVE_PATH }} archive
