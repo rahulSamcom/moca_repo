@@ -26,7 +26,7 @@ jobs:
 #         run: pod install
 
       - name: Build and Archive
-        run: xcodebuild -workspace MocaDC.xcworkspace -scheme MocaDC -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max' -archivePath ${{ env.ARCHIVE_PATH }} archive
+        run: xcodebuild -workspace MocaDC.xcodeproj -scheme MocaDC -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max' -archivePath ${{ env.ARCHIVE_PATH }} archive
 
       - name: Export Archive as IPA
         run: xcodebuild -exportArchive -archivePath ${{ env.ARCHIVE_PATH }} -exportPath ${{ env.EXPORT_PATH }} -exportOptionsPlist ExportOptions.plist
